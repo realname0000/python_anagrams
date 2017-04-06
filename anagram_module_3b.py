@@ -1,0 +1,31 @@
+import anagram_module_1
+
+class Answer():
+    def __init__(self, letters):
+        self.ana = anagram_module_1.Anagram(letters)
+    
+    # return list of wordlists (or None)
+    def get_list(self, used, words, sofar):
+        finished = 1
+        for f in used.keys():
+            if used[f] and f != ' ':
+                finished = 0
+        if finished:
+            return [sofar]
+        # find the first word that is possible
+        for pick in range(0,len(words)):
+            after=self.ana.char_remove(used, words[pick])
+            if (after):
+                story=sofar[:]
+                lol=[]
+                # one option is do pick this word
+                story.append(words[pick])
+                take=self.get_list(after, words[pick+1:], story)
+                for qq in range(0,len(take)):
+                    lol.append(take[qq])
+                # one option is do not pick this word
+                notake=self.get_list(used, words[pick+1:], sofar)
+                for qq in range(0,len(notake)):
+                    lol.append(notake[qq])
+                return lol
+        return []

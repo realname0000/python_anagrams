@@ -1,17 +1,5 @@
 import copy
 
-def char_remove(d, word):
-    after=copy.copy(d)
-    for i in range(0,len(word)):
-        ch = word[i]
-        if ch in after.keys():
-            if not after[ch]:
-                return None
-            after[ch] -= 1
-        else:
-            return None
-    return after
-
 class Anagram():
     def __init__(self, inwords):
         self.abc_used={}   # letters used
@@ -20,6 +8,18 @@ class Anagram():
         for i in range(0,len(inwords)):
             self.add(inwords[i])
         self.words=self.read_wordlist(len(inwords)) # from a file
+
+    def char_remove(self, d, word):
+        after=copy.copy(d)
+        for i in range(0,len(word)):
+            ch = word[i]
+            if ch in after.keys():
+                if not after[ch]:
+                    return None
+                after[ch] -= 1
+            else:
+                return None
+        return after
 
     def show_count(self):
         for a in self.abc_used.keys():
@@ -50,7 +50,7 @@ class Anagram():
             if lll<3:
                 continue
             used=copy.copy(self.abc_used)
-            after=char_remove(used, w)
+            after=self.char_remove(used, w)
             if not after:
                 continue
             try:
@@ -63,27 +63,4 @@ class Anagram():
             if lll > maxletters:
                 break
             words += words_by_length[lll]
-        print "%d words to work with" % (len(words))
         return words
-
-    # return list of wordlists (or None)
-    def get_list(self, used, words, sofar):
-        remain=0 # remaining letters to work with
-        for f in used.keys():
-            if used[f] and f != ' ':
-                remain += used[f]
-        if not remain:
-            return [sofar]
-        lol=[]
-        for pick in range(0,len(words)):
-            if remain < len(words[pick]):
-                break # words too long for this search
-            after=char_remove(used, words[pick])
-            if (after):
-                story=sofar[:]
-                # pick the first word possible
-                story.append(words[pick])
-                take=self.get_list(after, words[pick+1:], story)
-                for qq in range(0,len(take)):
-                    lol.append(take[qq])
-        return lol
