@@ -1,31 +1,55 @@
-import anagram_module_1
+import prepare_module_1
 
 class Answer():
     def __init__(self, letters):
-        self.ana = anagram_module_1.Anagram(letters)
+        self.ana = prepare_module_1.Anagram(letters)
+        self.stack = []
     
-    # return list of wordlists (or None)
-    def get_list(self, used, words, sofar):
-        finished = 1
-        for f in used.keys():
-            if used[f] and f != ' ':
-                finished = 0
-        if finished:
-            return [sofar]
-        # find the first word that is possible
-        for pick in range(0,len(words)):
-            after=self.ana.char_remove(used, words[pick])
-            if (after):
-                story=sofar[:]
-                lol=[]
-                # one option is do pick this word
-                story.append(words[pick])
-                take=self.get_list(after, words[pick+1:], story)
-                for qq in range(0,len(take)):
-                    lol.append(take[qq])
-                # one option is do not pick this word
-                notake=self.get_list(used, words[pick+1:], sofar)
-                for qq in range(0,len(notake)):
-                    lol.append(notake[qq])
-                return lol
-        return []
+    def advance(self, wordnumber, count_letters, letters):
+        self.stack.append([wordnumber, self.ana.words[wordnumber], count_letters, letters])
+
+    def backtrack(self):
+        if not len(self.stack):
+            return None # means we have finished
+        return self.stack.pop()
+
+    # return one wordlist (or None)
+    def generate(self):
+        # set up from previous state (if any)
+        lastset = self.backtrack()
+        if lastset:
+            start = lastset[0] + 1
+            count_letters = lastset[2]
+            letters = lastset[3]
+        else:
+            start = 0
+            letters = self.ana.abc_used
+            count_letters = 0 # remaining letters to work with
+            for f in letters.keys():
+                if letters[f] and f != ' ':
+                    count_letters += letters[f]
+        #
+        while 1:
+            for pick in range(start,len(self.ana.words)):
+                after=self.ana.char_remove(letters, self.ana.words[pick])
+                if after:
+                    self.advance(pick, count_letters, letters)
+                    count_letters -= len(self.ana.words[pick])
+                    letters = after
+                    # if all letters used prepare to return a solution
+                    if not count_letters:
+                        phrase = []
+                        for qq in self.stack:
+                            phrase.append(qq[1])
+                        return phrase
+                #
+                # if word is too long for letters or pick exceeds range then backtrack
+                if count_letters < len(self.ana.words[pick]):
+                    break # from for loop
+            # after end of for loop have to backtrack
+            lastset = self.backtrack()
+            if not lastset:
+                return None
+            start = lastset[0] + 1
+            count_letters = lastset[2]
+            letters = lastset[3]

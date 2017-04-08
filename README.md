@@ -10,6 +10,8 @@ $ time ./anagram_prog_1.py president trump > presidential_anagrams
 Maybe 20 minutes later you have ~250,000 anagrams including
 ['pint', 'rust', 'permed']
 
-There are 3 variants using different ways to extract the word lists
-and the iterative one with single recursion is faster than double
-recursion.
+There are 4 variants using different ways to extract the word lists.
+The iterative one with single recursion is faster than double
+recursion.  The 4th one generates a single output per call to the
+function (rather than returning eventually with all the results)
+making that much the fastest way to get one output.
