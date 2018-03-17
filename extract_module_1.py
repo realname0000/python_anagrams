@@ -22,7 +22,6 @@ class Answer():
                 # pick the first word possible
                 story.append(words[pick])
                 take=self.get_list(after, words[pick+1:], story)
-                for qq in range(0,len(take)):
-                    lol.append(take[qq])
+                lol += take
         return lol
 

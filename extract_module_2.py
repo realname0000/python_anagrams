@@ -20,12 +20,10 @@ class Answer():
                 lol=[]
                 # one option is do not pick this word
                 notake=self.get_list(used, words[pick+1:], story)
-                for qq in range(0,len(notake)):
-                    lol.append(notake[qq])
+                lol += notake
                 # one option is do pick this word
                 story.append(words[pick])
                 take=self.get_list(after, words[pick+1:], story)
-                for qq in range(0,len(take)):
-                    lol.append(take[qq])
+                lol += take
                 return lol
         return []
